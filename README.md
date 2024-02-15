@@ -2,6 +2,9 @@
 
 AyeMatey is a demo app for a treasure hunt game
 
+You need to create an API key in order to use it. I've deactivated the one before pushing to avoid any issues with it being public.
+It can be found in `guesses/new`
+
 ## Setup
 
 1. Install ruby 3.3.0
