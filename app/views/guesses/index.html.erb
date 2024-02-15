@@ -1,0 +1,37 @@
+<h1>Your Guesses</h1>
+
+<% if @guesses.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Treasure</th>
+        <th>Latitude</th>
+        <th>Longitude</th>
+        <th>Winner</th>
+        <th>Distance to Treasure</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @guesses.each do |guess| %>
+        <tr>
+          <td><%= guess.user.username %></td>
+          <td><%= guess.treasure.name %></td>
+          <td><%= guess.latitude %></td>
+          <td><%= guess.longitude %></td>
+          <td><%= guess.winner ? 'Yes' : 'No' %></td>
+          <td><%= number_with_precision(guess.distance_to_treasure, precision: 2) %> meters</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <h2>No guesses yet!</h2>
+<% end %>
+
+<% unless current_user.has_won? %>
+  <%= link_to 'Create New Guess', new_user_guess_path(current_user.username) %>
+<% end %>
+
+<%= link_to "Winners", winners_path %>
+<%= paginate @guesses %>

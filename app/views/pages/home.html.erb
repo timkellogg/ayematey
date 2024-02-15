@@ -1,0 +1,14 @@
+<h1>Aye Matey!!</h1>
+
+<p>This is a simple treasure hunting game</p>
+
+<p>You can create a new account and then you have to be the closest to guessing where the treasure is</p>
+
+<p>You have unlimited guesses but once you guess right, you better hope it was the closest!</p>
+
+<% if user_signed_in? %>
+  <%= link_to 'Sign Out', destroy_user_session_path %>
+<% else %>
+  <%= link_to 'Sign in', new_user_session_path %>
+  <%= link_to 'Register', new_user_registration_path %>
+<% end %>

@@ -1,0 +1,67 @@
+<style>
+  #map {
+    height: 400px;
+    width: 100%;
+  }
+</style>
+
+<div id="map"></div>
+
+<h1>Aye Matey!</h1>
+<p>Click the map to guess where the treasure is. You need to be within 1000 meters of the treasure to win!</p>
+
+<%= form_with model: [current_user, @guess], url: user_guesses_path(username: current_user.username), local: true do |form| %>
+  <% if @guess.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@guess.errors.count, "error") %> prohibited this guess from being saved:</h2>
+
+      <ul>
+      <% @guess.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= form.hidden_field :latitude, id: 'guess_latitude' %>
+  <%= form.hidden_field :longitude, id: 'guess_longitude' %>
+
+  <div class="actions">
+    <%= form.submit "Submit!", disabled: @has_won %>
+  </div>
+<% end %>
+
+<%= link_to "Your Guesses", user_guesses_path(current_user.username) %>
+
+<script>
+  let map;
+  let marker;
+
+  function initMap() {
+    map = new google.maps.Map(document.getElementById("map"), {
+      center: { lat: 15.0, lng: -75.0 },
+      zoom: 5,
+      scrollwheel: false,
+      draggable: true,
+    });
+
+    map.addListener("click", (mapsMouseEvent) => {
+      if (marker) {
+        marker.setMap(null);
+      }
+
+      marker = new google.maps.Marker({
+        position: mapsMouseEvent.latLng,
+        map: map,
+
+        icon: "<%= asset_path('pirate_sm.png') %>"
+      });
+
+      const clickedLat = mapsMouseEvent.latLng.lat();
+      const clickedLng = mapsMouseEvent.latLng.lng();
+      document.getElementById('guess_latitude').value = clickedLat;
+      document.getElementById('guess_longitude').value = clickedLng;
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAqYKs08Gxoe88S0-9ebFIaKO9BShMQ2zw&callback=initMap" type="text/javascript"></script>

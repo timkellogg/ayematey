@@ -1,0 +1,58 @@
+<h1>Winners</h1>
+
+<style>
+  .sortable {
+    cursor: pointer;
+  }
+  .sortable::after {
+    content: ' ⇵';
+  }
+</style>
+
+<% if @winners.any? %>
+  <table id="winners">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Treasure</th>
+        <th class="sortable" data-column="distance">Distance to Treasure</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @winners.each do |winner| %>
+        <tr>
+          <td><%= winner.user.username %></td>
+          <td><%= winner.treasure.name %></td>
+          <td data-value="<%= winner.distance_to_treasure %>"><%= number_with_precision(winner.distance_to_treasure, precision: 2) %> meters</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @winners %>
+<% else %>
+  <h2>No winners yet!</h2>
+<% end %>
+
+<%= link_to "Your Guesses", new_user_guess_path(current_user.username) %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('winners');
+    const tbody = table.querySelector('tbody');
+    const th = table.querySelector('.sortable[data-column="distance"]');
+    
+    th.addEventListener('click', function() {
+      const asc = !this.asc;
+      this.asc = asc;
+
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+
+      rows.sort(function(a, b) {
+        const aValue = parseFloat(a.querySelector('[data-value]').getAttribute('data-value'));
+        const bValue = parseFloat(b.querySelector('[data-value]').getAttribute('data-value'));
+        return asc ? aValue - bValue : bValue - aValue;
+      }).forEach(row => tbody.appendChild(row));
+    });
+  });
+</script>
+
